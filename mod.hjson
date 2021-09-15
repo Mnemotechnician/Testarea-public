@@ -1,0 +1,9 @@
+displayName: "Testareaa"
+name: "testarea"
+author: "Мнемотехник"
+description: "Some random java things, useful or not. Basically I'm implementing my random ideas here."
+version: 1.2
+minGameVersion: 131
+
+java: true
+main: "testarea.TestareaMod"
