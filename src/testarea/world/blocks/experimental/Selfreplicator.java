@@ -10,11 +10,13 @@ import arc.graphics.g2d.*;
 import mindustry.*;
 import mindustry.graphics.*;
 import mindustry.content.*;
+import mindustry.type.*;
 import mindustry.ctype.*;
 import mindustry.game.*;
 import mindustry.gen.*;
 import mindustry.world.*;
 import mindustry.world.meta.*;
+import mindustry.world.modules.*;
 
 import testarea.content.*;
 import testarea.world.blocks.util.*;
@@ -52,7 +54,8 @@ public class Selfreplicator extends Block {
 				if ((heat += Time.delta) > nextReplicate) {
 					targetTile = randomAdjacent();
 					
-					if (targetTile != null) {
+					if (targetTile != null && (Vars.state.rules.infiniteResources || tryConsume(team.items(), block.requirements, Vars.state.rules.buildCostMultiplier))) {
+						team.items().remove(block.requirements);
 						isReplicating = true;
 						targetTile.setBlock(TestareaBlocks.placeholder, team, 0);
 					}
@@ -63,7 +66,7 @@ public class Selfreplicator extends Block {
 					heat = 0;
 					replicateTimer = 0;
 					
-					if (tile.build instanceof Selfreplicator.SelfreplicatorBuild && (canReplicate(targetTile)  || targetTile.block() instanceof Placeholder)) {
+					if (tile.build instanceof Selfreplicator.SelfreplicatorBuild && (canReplicate(targetTile) || targetTile.block() instanceof Placeholder)) {
 						targetTile.setBlock(TestareaBlocks.selfreplicator, team, 0);
 						nextReplicate = replicateRate * Mathf.random(0.75f, 1f);
 					}
@@ -82,6 +85,16 @@ public class Selfreplicator extends Block {
 			
 			if (tmpTilesAdj.size < 1) return null;
 			return tmpTilesAdj.get(Mathf.random(tmpTilesAdj.size - 1));
+		}
+		
+		//Tries to consume items from the providen item module. returns true on success.
+		private boolean tryConsume(ItemModule inventory, ItemStack[] items, float multiplier) {
+			for (ItemStack stack : items) {
+				if (!inventory.has(stack.item, Math.round(stack.amount * multiplier))) return false;
+			}
+			
+			for (ItemStack stack : items) inventory.remove(stack.item, Math.round(stack.amount * multiplier));
+			return true;
 		}
 		
 		//100500 checks cus idk which are really needed
