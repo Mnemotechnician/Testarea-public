@@ -18,13 +18,14 @@ import testarea.content.*;
 public class TestareaMod extends Mod {
 	
 	public static ContentList[] contents = {
-		new TestareaBlocks()
+		new TestareaExtensions(),
+		new TestareaBlocks() //must be init later
 	};
 
 	public TestareaMod() {
 		TVars.init();
 		
-		if (TVars.owo) {
+		if (TVars.owo && false) { //disabled until i find a way to check whether a specific mod is REALLY enabled
 			//listen for game load event
 			Events.on(ClientLoadEvent.class, e -> {
 				//show dialog upon startup

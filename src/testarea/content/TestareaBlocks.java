@@ -11,13 +11,21 @@ import mindustry.type.*;
 import mindustry.world.*;
 import mindustry.world.meta.*;
 
+import testarea.content.*;
 import testarea.world.blocks.effect.*;
 import testarea.world.blocks.experimental.*;
 import testarea.world.blocks.util.*;
+import testarea.world.blocks.storage.*;
+import testarea.world.extensions.*;
+import testarea.world.modules.*;
+
+import static testarea.content.TestareaExtensions.*;
 
 public class TestareaBlocks implements ContentList {
 	
 	public static Block 
+	
+	weaponizedCore,
 		
 	accelerator, overclocker,
 		
@@ -27,6 +35,22 @@ public class TestareaBlocks implements ContentList {
 	
 	@Override
 	public void load() {
+		weaponizedCore = new WeaponizedCore("core-uranium") {{
+			size = 6;
+			
+			unitType = UnitTypes.gamma;
+			health = 9000;
+			itemCapacity = 17500;
+			thrusterLength = 40 / 4f;
+			
+			unitCapModifier = 30;
+			researchCostMultiplier = 0.15f;
+			requirements(Category.effect, ItemStack.with(Items.copper, 13000, Items.lead, 11000, Items.silicon, 9000, Items.thorium, 6000, Items.plastanium, 4000));
+			
+			turretMounts = TurretModule.define(vortex, 2, maelstrom, 2, vortex, 2, maelstrom, 2);
+			turretOffset = 16;
+		}};
+		
 		selfreplicator = new Selfreplicator("selfreplicator") {{
 			size = 1;
 			fillsTile = false;
