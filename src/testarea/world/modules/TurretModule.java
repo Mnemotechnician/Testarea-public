@@ -4,6 +4,7 @@ import arc.struct.*;
 import arc.util.io.*;
 import arc.math.*;
 import arc.math.geom.*;
+import mindustry.type.*;
 import mindustry.gen.*;
 import mindustry.world.meta.*;
 
@@ -19,6 +20,8 @@ public class TurretModule {
 	public Seq<InblockTurret.TurretEntity> turrets;
 	public Building parent;
 	
+	public Seq<Item> acceptedItems = new Seq(false, 5);
+	
 	/** Creates a turret module from an existing turret entity sequence */
 	public TurretModule(Building parent, int offset, Seq<InblockTurret.TurretEntity> turrets) {
 		this.turrets = turrets;
@@ -31,6 +34,8 @@ public class TurretModule {
 			t.offX = Angles.trnsx(rotation, offset);
 			t.offY = Angles.trnsy(rotation, offset);
 			t.set(parent.x + t.offX, parent.y + t.offY);
+			
+			updateAccepted();
 		}
 	}
 	
@@ -60,6 +65,21 @@ public class TurretModule {
 	/** Displays module stats in a hacky way. Takes a turret module definition as an input */
 	public static void display(Stats stats, Seq<InblockTurret> turrets) {
 		StatUtils.displayTurrets(stats, turrets);
+	}
+	
+	/** Updates accepted ammo list */
+	public void updateAccepted() {
+		acceptsItems.clear();
+		for (InblockTurret.TurretEntity t : turrets) {
+			for (InblockTurret.AmmoEntry ammo : t.type.ammoList) {
+				if (!acceptedItems.contains(ammo.item)) acceptedItems.add(ammo.item);
+			}
+		}
+	}
+	
+	/** Returns whether this module's turrets need the provided item */
+	public boolean acceptItem(Item item) {
+		return acceptedItems.contains(item);
 	}
 	
 	/*Building methods*/

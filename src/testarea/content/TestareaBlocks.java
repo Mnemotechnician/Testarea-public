@@ -10,15 +10,16 @@ import mindustry.gen.*;
 import mindustry.type.*;
 import mindustry.world.*;
 import mindustry.world.meta.*;
+import static mindustry.type.ItemStack.*;
 
 import testarea.content.*;
 import testarea.world.blocks.effect.*;
 import testarea.world.blocks.experimental.*;
 import testarea.world.blocks.util.*;
-import testarea.world.blocks.storage.*;
+import testarea.world.blocks.storage.*
+import testarea.world.blocks.defense.*;
 import testarea.world.extensions.*;
 import testarea.world.modules.*;
-
 import static testarea.content.TestareaExtensions.*;
 
 public class TestareaBlocks implements ContentList {
@@ -30,6 +31,8 @@ public class TestareaBlocks implements ContentList {
 	accelerator, overclocker,
 		
 	selfreplicator, deconstructor,
+	
+	duet,
 	
 	placeholder;
 	
@@ -45,7 +48,7 @@ public class TestareaBlocks implements ContentList {
 			
 			unitCapModifier = 30;
 			researchCostMultiplier = 0.15f;
-			requirements(Category.effect, ItemStack.with(Items.copper, 13000, Items.lead, 11000, Items.silicon, 9000, Items.thorium, 6000, Items.plastanium, 4000));
+			requirements(Category.effect, with(Items.copper, 13000, Items.lead, 11000, Items.silicon, 9000, Items.thorium, 6000, Items.plastanium, 4000));
 			
 			turretMounts = TurretModule.define(vortex, 2, maelstrom, 2, vortex, 2, maelstrom, 2);
 			turretOffset = 16;
@@ -56,7 +59,7 @@ public class TestareaBlocks implements ContentList {
 			fillsTile = false;
 			replicateRate = 210f;
 			health = 80;
-			requirements(Category.effect, ItemStack.with(Items.silicon, 20, Items.plastanium, 10, Items.phaseFabric, 8));
+			requirements(Category.effect, with(Items.silicon, 20, Items.plastanium, 10, Items.phaseFabric, 8));
 		}};
 		
 		deconstructor = new Deconstructor("deconstructor") {{
@@ -64,7 +67,7 @@ public class TestareaBlocks implements ContentList {
 			deconstructRate = 200f;
 			deconstructSpeed = 0.1f;
 			health = 120;
-			requirements(Category.effect, ItemStack.with(Items.silicon, 150, Items.plastanium, 90, Items.metaglass, 50));
+			requirements(Category.effect, with(Items.silicon, 150, Items.plastanium, 90, Items.metaglass, 50));
 		}};
 		
 		accelerator = new Overclocker("accelerator") {{
@@ -75,7 +78,7 @@ public class TestareaBlocks implements ContentList {
 			relativeDamage = 0.03f / 60f;
 			blobSpeed = 1f / 190f;
 			consumes.power(420f / 60f);
-			requirements(Category.effect, ItemStack.with(Items.lead, 250, Items.silicon, 170, Items.plastanium, 40));
+			requirements(Category.effect, with(Items.lead, 250, Items.silicon, 170, Items.plastanium, 40));
 		}};
 		
 		overclocker = new Overclocker("overclocker") {{
@@ -86,13 +89,23 @@ public class TestareaBlocks implements ContentList {
 			relativeDamage = 0.1f / 60f;
 			blobSpeed = 1f / 120f;
 			consumes.power(1040f / 60f);
-			requirements(Category.effect, ItemStack.with(Items.titanium, 400, Items.silicon, 750, Items.surgeAlloy, 400));
+			requirements(Category.effect, with(Items.titanium, 400, Items.silicon, 750, Items.surgeAlloy, 400));
+		}};
+		
+		duet = new Multiturret("duet") {{
+			size = 3;
+			
+			turretMounts = TurretModule.define(vortex, 1, maelstrom, 1);
+			turretOffset = 6;
+			
+			requirements(Category.turrets, with(Items.copper, 300, Items.silicon, 120, Items.plastanium, 50, Items.titanium, 20));
 		}};
 		
 		
 		placeholder = new Placeholder("placeholder") {{
 			size = 1;
-			requirements(Category.effect, BuildVisibility.hidden, ItemStack.with(Items.thorium, 1));
+			itemCapacity = 10;
+			requirements(Category.effect, BuildVisibility.hidden, with(Items.thorium, 1));
 		}};
 	}
 	

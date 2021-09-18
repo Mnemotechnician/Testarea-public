@@ -151,7 +151,7 @@ public class InblockTurret {
 			set(parent.x + offX, parent.y + offY);
 			
 			currentAmmo = possibleAmmo();
-			if (currentAmmo != null) range = (defaultRange > 0 ? defaultRange : currentAmmo.bullet.speed * currentAmmo.bullet.lifetime * 1.1f);
+			if (currentAmmo != null) range = (defaultRange > 0 ? defaultRange : currentAmmo.bullet.speed * currentAmmo.bullet.lifetime * 1.1);
 			
 			if(!validateTarget()) target = null;
 			wasShooting = false;
@@ -262,7 +262,7 @@ public class InblockTurret {
 		}
 		
 		protected void updateShooting(){
-			reload += Time.delta * peekAmmo().reloadMultiplier;
+			reload += parent.delta() * peekAmmo().reloadMultiplier;
 			
 			if (reload >= reloadTime && !charging) {
 				BulletType type = peekAmmo();
@@ -353,7 +353,7 @@ public class InblockTurret {
 		}
 
 		protected void turnToTarget(float targetRot){
-			rotation = Angles.moveToward(rotation, targetRot, rotateSpeed * Time.delta);
+			rotation = Angles.moveToward(rotation, targetRot, rotateSpeed * parent.delta());
 		}
 
 		public boolean shouldTurn(){
