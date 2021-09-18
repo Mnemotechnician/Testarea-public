@@ -24,7 +24,7 @@ public class Multiturret extends Block {
 	public Seq<InblockTurret> turretMounts;
 	public int turretOffset = 8;
 	
-	public Duet(String name) {
+	public Multiturret(String name) {
 		super(name);
 		hasItems = true;
 		solid = true;

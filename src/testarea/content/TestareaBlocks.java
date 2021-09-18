@@ -16,7 +16,7 @@ import testarea.content.*;
 import testarea.world.blocks.effect.*;
 import testarea.world.blocks.experimental.*;
 import testarea.world.blocks.util.*;
-import testarea.world.blocks.storage.*
+import testarea.world.blocks.storage.*;
 import testarea.world.blocks.defense.*;
 import testarea.world.extensions.*;
 import testarea.world.modules.*;
