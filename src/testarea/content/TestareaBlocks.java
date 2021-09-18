@@ -67,7 +67,7 @@ public class TestareaBlocks implements ContentList {
 			deconstructRate = 200f;
 			deconstructSpeed = 0.1f;
 			health = 120;
-			requirements(Category.effect, with(Items.silicon, 150, Items.plastanium, 90, Items.metaglass, 50));
+			requirements(Category.effect, with(Items.silicon, 40, Items.plastanium, 16, Items.metaglass, 8));
 		}};
 		
 		accelerator = new Overclocker("accelerator") {{
@@ -77,8 +77,9 @@ public class TestareaBlocks implements ContentList {
 			baseDamage = 60f / 60f;
 			relativeDamage = 0.03f / 60f;
 			blobSpeed = 1f / 190f;
+			
 			consumes.power(420f / 60f);
-			requirements(Category.effect, with(Items.lead, 250, Items.silicon, 170, Items.plastanium, 40));
+			requirements(Category.effect, with(Items.lead, 120, Items.silicon, 80, Items.plastanium, 90));
 		}};
 		
 		overclocker = new Overclocker("overclocker") {{
@@ -88,8 +89,9 @@ public class TestareaBlocks implements ContentList {
 			baseDamage = 150f / 60f;
 			relativeDamage = 0.1f / 60f;
 			blobSpeed = 1f / 120f;
+			
 			consumes.power(1040f / 60f);
-			requirements(Category.effect, with(Items.titanium, 400, Items.silicon, 750, Items.surgeAlloy, 400));
+			requirements(Category.effect, with(Items.titanium, 250, Items.silicon, 300, Items.surgeAlloy, 100));
 		}};
 		
 		duet = new Multiturret("duet") {{
@@ -98,9 +100,9 @@ public class TestareaBlocks implements ContentList {
 			turretMounts = TurretModule.define(vortex, 1, maelstrom, 1);
 			turretOffset = 6;
 			
-			requirements(Category.turrets, with(Items.copper, 300, Items.silicon, 120, Items.plastanium, 50, Items.titanium, 20));
+			consumes.power(140f / 60f);
+			requirements(Category.turret, with(Items.copper, 300, Items.titanium, 150, Items.silicon, 250, Items.plastanium, 50));
 		}};
-		
 		
 		placeholder = new Placeholder("placeholder") {{
 			size = 1;

@@ -38,16 +38,16 @@ public class InblockTurret {
 	private boolean initialized = false;
 	
 	public Effect shootEffect = Fx.none;
-    public Effect smokeEffect = Fx.none;
-    public Effect ammoUseEffect = Fx.none;
+	public Effect smokeEffect = Fx.none;
+	public Effect ammoUseEffect = Fx.none;
 	public Sound shootSound = Sounds.shoot;
 	
 	//region
 	public TextureRegion region;
 	//expensive way to draw outline. looks really ugly. i can't just generate an outline region cus thanks anuke for not supporting irregular content types
 	public boolean drawOtline = false;
-    public Color outlineColor = Color.valueOf("404049");;
-    public int outlineRadius = 8;
+	public Color outlineColor = Color.valueOf("404049");;
+	public int outlineRadius = 8;
 	
 	//general info
 	public float rotateSpeed = 5f;
@@ -69,16 +69,16 @@ public class InblockTurret {
 	public float burstSpacing = 0;
 	public float elevation = 1f;
 	public boolean alternate = false;
-    //charging
-    public float chargeTime = -1f;
-    public int chargeEffects = 5;
-    public float chargeMaxDelay = 10f;
-    public boolean accurateDelay = false;
-    public Effect chargeEffect = Fx.none;
-    public Effect chargeBeginEffect = Fx.none;
-    public Sound chargeSound = Sounds.none;
-    //h
-    public float defaultRange = -1;
+	//charging
+	public float chargeTime = -1f;
+	public int chargeEffects = 5;
+	public float chargeMaxDelay = 10f;
+	public boolean accurateDelay = false;
+	public Effect chargeEffect = Fx.none;
+	public Effect chargeBeginEffect = Fx.none;
+	public Sound chargeSound = Sounds.none;
+	//h
+	public float defaultRange = -1;
 	
 	public boolean targetAir = true, targetGround = true;
 	public Sortf unitSort = Unit::dst2;
@@ -124,22 +124,25 @@ public class InblockTurret {
 	public class TurretEntity implements Position {
 		
 		public InblockTurret type;
+		public Building parent;
 		
 		public float x = 0, y = 0;
 		public float rotation = 90f;
 		public float offX = 0, offY = 0;
-		public Building parent;
+		public float range = 0;
 		
 		public float reload = 0, recoil = 0, heat = 0;
 		public int shotCounter = 0;
+		public int ammoLeft = 0;
+		public boolean wasShooting = false, charging = false;
 		public Posc target = null;
 		public Vec2 targetPos = new Vec2();
-		public boolean wasShooting = false, charging = false;
+		public AmmoEntry currentAmmo = null;
 		
 		private Interval interval = new Interval(2);
-		public AmmoEntry currentAmmo = null;
-		public float range = 0;
-		public int ammoLeft = 0;
+		
+		//These must be handled by the block that implements logic & player control. isControlled prevents turret from auto-targetting
+		public boolean isControlled = false, controlShooting = false;
 		
 		protected TurretEntity(InblockTurret type, Building parent) {
 			this.type = type;
@@ -151,7 +154,7 @@ public class InblockTurret {
 			set(parent.x + offX, parent.y + offY);
 			
 			currentAmmo = possibleAmmo();
-			if (currentAmmo != null) range = (defaultRange > 0 ? defaultRange : currentAmmo.bullet.speed * currentAmmo.bullet.lifetime * 1.1);
+			if (currentAmmo != null) range = (defaultRange > 0 ? defaultRange : currentAmmo.bullet.speed * currentAmmo.bullet.lifetime * 1.1f);
 			
 			if(!validateTarget()) target = null;
 			wasShooting = false;
@@ -159,15 +162,21 @@ public class InblockTurret {
 			recoil = Mathf.lerpDelta(recoil, 0f, restitution);
 			heat = Mathf.lerpDelta(heat, 0f, cooldown);
 			
-			if(hasAmmo()) {
+			if(hasAmmo() && parent.cons.valid()) {
 				if(interval.get(0, 20)) {
 					findTarget();
 				}
 				
 				if(validateTarget()) {
-					targetPosition(target);
-					if(Float.isNaN(rotation)){
-						rotation = 0;
+					boolean canShoot = true;
+					
+					if (isControlled) { //player & logic behavior
+						canShoot = controlShooting;
+					} else { //default
+						targetPosition(target);
+						if(Float.isNaN(rotation)){
+							rotation = 0;
+						}
 					}
 					
 					float targetRot = angleTo(targetPos);
@@ -175,7 +184,7 @@ public class InblockTurret {
 						turnToTarget(targetRot);
 					}
 					
-					if (currentAmmo != null && Angles.angleDist(rotation, targetRot) < shootCone) {
+					if (canShoot && currentAmmo != null && Angles.angleDist(rotation, targetRot) < shootCone) {
 						wasShooting = true;
 						updateShooting();
 					}
@@ -341,7 +350,7 @@ public class InblockTurret {
 		}
 		
 		protected boolean validateTarget(){
-			return !Units.invalidateTarget(target, parent.team, x, y);
+			return !Units.invalidateTarget(target, parent.team, x, y) || isControlled;
 		}
 		
 		protected void findTarget(){

@@ -4,6 +4,7 @@ import arc.struct.*;
 import arc.util.io.*;
 import arc.math.*;
 import arc.math.geom.*;
+import arc.func.*;
 import mindustry.type.*;
 import mindustry.gen.*;
 import mindustry.world.meta.*;
@@ -14,34 +15,26 @@ import testarea.world.extensions.*;
 /**
  * Handles on-block turrets.
  * update(), draw(), read() and write() must be called upon respective building's events
+ * logic & player control can be implemented separately
  */
 public class TurretModule {
 	
-	public Seq<InblockTurret.TurretEntity> turrets;
+	private Seq<InblockTurret.TurretEntity> turrets;
+	private Seq<Item> acceptedItems = new Seq(false, 5);
 	public Building parent;
 	
-	public Seq<Item> acceptedItems = new Seq(false, 5);
-	
 	/** Creates a turret module from an existing turret entity sequence */
-	public TurretModule(Building parent, int offset, Seq<InblockTurret.TurretEntity> turrets) {
+	public TurretModule(Building parent, int offset, float rotationOffset, Seq<InblockTurret.TurretEntity> turrets) {
 		this.turrets = turrets;
 		this.parent = parent;
 		
-		for (int i = 0; i < turrets.size; i++) {
-			var t = turrets.get(i);
-			float rotation = (360 / turrets.size) * i;
-			t.parent = parent;
-			t.offX = Angles.trnsx(rotation, offset);
-			t.offY = Angles.trnsy(rotation, offset);
-			t.set(parent.x + t.offX, parent.y + t.offY);
-			
-			updateAccepted();
-		}
+		rearrange(offset, rotationOffset);
+		updateAccepted();
 	}
 	
 	/** Creates a turret module from a turret module "definition" */
-	public TurretModule(Building parent, Seq<InblockTurret> turrets, int offset) {
-		this(parent, offset, fromDefinition(turrets));
+	public TurretModule(Building parent, Seq<InblockTurret> turrets, int offset, float rotationOffset) {
+		this(parent, offset, rotationOffset, fromDefinition(turrets));
 	}
 	
 	/* Whoever reads this... I too hate myself for doing this shitcode. */
@@ -69,7 +62,7 @@ public class TurretModule {
 	
 	/** Updates accepted ammo list */
 	public void updateAccepted() {
-		acceptsItems.clear();
+		acceptedItems.clear();
 		for (InblockTurret.TurretEntity t : turrets) {
 			for (InblockTurret.AmmoEntry ammo : t.type.ammoList) {
 				if (!acceptedItems.contains(ammo.item)) acceptedItems.add(ammo.item);
@@ -77,9 +70,31 @@ public class TurretModule {
 		}
 	}
 	
+	/** Updates offset & parent of existing turrets */
+	public void rearrange(int offset, float rotationOffset) {
+		for (int i = 0; i < turrets.size; i++) {
+			var t = turrets.get(i);
+			float rotation = (360 / turrets.size) * i + rotationOffset;
+			t.parent = parent;
+			t.offX = Angles.trnsx(rotation, offset);
+			t.offY = Angles.trnsy(rotation, offset);
+			t.set(parent.x + t.offX, parent.y + t.offY);
+		}
+	}
+	
 	/** Returns whether this module's turrets need the provided item */
 	public boolean acceptItem(Item item) {
 		return acceptedItems.contains(item);
+	}
+	
+	/** Iterates through every turret. */
+	public void each(Cons<InblockTurret.TurretEntity> c) {
+		turrets.each(c);
+	}
+	
+	/** Returns the amount of turrets this module handles */
+	public int amount() {
+		return turrets.size;
 	}
 	
 	/*Building methods*/

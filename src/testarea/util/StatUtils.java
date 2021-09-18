@@ -19,6 +19,8 @@ public class StatUtils {
 	
 	/** Displays turret module stats in a hacky way. Takes a turret module definition as input */
 	public static void displayTurrets(Stats stats, Seq<InblockTurret> turrets) {
+		tmpComp.clear();
+		
 		StringBuilder b = new StringBuilder("[stat]");
 		b.append(turrets.size).append(" [lightgray]turrets in total. Turrets by types:");
 		for (InblockTurret turret : turrets) {

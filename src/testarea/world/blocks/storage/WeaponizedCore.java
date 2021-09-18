@@ -40,9 +40,15 @@ public class WeaponizedCore extends CoreBlock {
 		TurretModule.display(stats, turretMounts);
 	}
 	
+	@Override
+	protected TextureRegion[] icons(){
+		TextureRegion r = variants > 0 ? Core.atlas.find(name + "1") : region;
+		return new TextureRegion[]{r, teamRegions[Team.sharded.id]};
+	}
+	
 	public class WeaponizedCoreBuild extends CoreBlock.CoreBuild {
 		
-		public TurretModule turrets = new TurretModule(this, turretMounts, turretOffset);
+		public TurretModule turrets = new TurretModule(this, turretMounts, turretOffset, 0);
 		
 		@Override
 		public void updateTile() {
