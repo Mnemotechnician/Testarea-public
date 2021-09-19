@@ -3,19 +3,26 @@ package testarea.content;
 import mindustry.gen.*;
 import mindustry.content.*;
 import mindustry.ctype.*;
+import mindustry.world.*;
 import mindustry.entities.bullet.*;
 
 import testarea.world.extensions.*;
+import testarea.world.extensions.turret.*;
+import testarea.world.extensions.turret.adapter.*;
 
 public class TestareaExtensions implements ContentList {
 	
 	public static InblockTurret
 	
+	officialDuo,
+	
 	vortex, maelstrom;
 	
 	@Override
 	public void load() {
-		vortex = new InblockTurret("vortex") {{
+		officialDuo = new ItemTurretAdapter("duo", (mindustry.world.blocks.defense.turrets.ItemTurret) Blocks.duo);
+		
+		vortex = new ItemTurret("vortex") {{
 			reloadTime = 60f / 8f;
 			inaccuracy = 20f;
 			shootCone = 40f;
@@ -29,7 +36,7 @@ public class TestareaExtensions implements ContentList {
 			shootSound = Sounds.missile;
 		}};
 		
-		maelstrom = new InblockTurret("maelstrom") {{
+		maelstrom = new ItemTurret("maelstrom") {{
 			reloadTime = 60f / 2f;
 			shootShake = 2f;
 			

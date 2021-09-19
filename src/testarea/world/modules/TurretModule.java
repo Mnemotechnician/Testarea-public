@@ -19,8 +19,7 @@ import testarea.world.extensions.*;
  */
 public class TurretModule {
 	
-	private Seq<InblockTurret.TurretEntity> turrets;
-	private Seq<Item> acceptedItems = new Seq(false, 5);
+	protected Seq<InblockTurret.TurretEntity> turrets;
 	public Building parent;
 	
 	/** Creates a turret module from an existing turret entity sequence */
@@ -29,7 +28,6 @@ public class TurretModule {
 		this.parent = parent;
 		
 		rearrange(offset, rotationOffset);
-		updateAccepted();
 	}
 	
 	/** Creates a turret module from a turret module "definition" */
@@ -44,7 +42,7 @@ public class TurretModule {
 		return t;
 	}
 	
-	/** Creates a turret module "definition" from pairs of "TurretEntity turret, int count" */
+	/** Creates a turret module "definition" from pairs of "InblockTurret turret, int count" */
 	public static Seq<InblockTurret> define(Object... pairs) {
 		var t = new Seq<InblockTurret>(pairs.length / 2);
 		for (int i = 0; i < pairs.length; i += 2) {
@@ -58,16 +56,6 @@ public class TurretModule {
 	/** Displays module stats in a hacky way. Takes a turret module definition as an input */
 	public static void display(Stats stats, Seq<InblockTurret> turrets) {
 		StatUtils.displayTurrets(stats, turrets);
-	}
-	
-	/** Updates accepted ammo list */
-	public void updateAccepted() {
-		acceptedItems.clear();
-		for (InblockTurret.TurretEntity t : turrets) {
-			for (InblockTurret.AmmoEntry ammo : t.type.ammoList) {
-				if (!acceptedItems.contains(ammo.item)) acceptedItems.add(ammo.item);
-			}
-		}
 	}
 	
 	/** Updates offset & parent of existing turrets */
@@ -84,7 +72,10 @@ public class TurretModule {
 	
 	/** Returns whether this module's turrets need the provided item */
 	public boolean acceptItem(Item item) {
-		return acceptedItems.contains(item);
+		for (InblockTurret.TurretEntity t : turrets) {
+			if (t.acceptAsAmmo(item)) return true;
+		}
+		return false;
 	}
 	
 	/** Iterates through every turret. */

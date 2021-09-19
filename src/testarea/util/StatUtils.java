@@ -5,6 +5,7 @@ import java.lang.*;
 import arc.*;
 import arc.util.*;
 import arc.struct.*;
+import mindustry.ctype.*;
 import mindustry.entities.*;
 import mindustry.entities.bullet.*;
 import mindustry.world.meta.*;
@@ -16,7 +17,7 @@ import testarea.world.modules.*;
 public class StatUtils {
 	
 	//temporary
-	private static Seq<InblockTurret> tmpTurrets = new Seq(false, 4);
+	private static Seq<InblockTurret> tmpTurrets = new Seq(false, 8);
 	private static int indent = 0;
 	
 	/** Displays turret module stats in a hacky way. Takes a turret module definition as input */
@@ -26,7 +27,7 @@ public class StatUtils {
 		b.append(Core.bundle.format("stat.multiturret-header", turrets.size));
 		
 		for (InblockTurret turret : turrets) {
-			if (tmpTurrets.contains(turret)) return;
+			if (tmpTurrets.contains(turret)) continue;
 			tmpTurrets.add(turret); //do not display twice
 			
 			indent(b, 1);
@@ -37,15 +38,15 @@ public class StatUtils {
 			indent(b, 2); b.append(Core.bundle.get("stat.inaccuracy")).append(": ").append(Math.round(turret.inaccuracy)).append("°");
 			indent(b, 2); b.append(Core.bundle.get("stat.reload")).append(": ").append(Strings.fixed(60f / turret.reloadTime, 1)).append(Core.bundle.get("unit.persecond"));
 			
-			for (InblockTurret.AmmoEntry ammo : turret.ammoList) {
+			for (ObjectMap.Entry<UnlockableContent, BulletType> ammo : turret.allAmmo()) {
 				indent(b, 2); indent(b, 3);
 				indent = 3;
-				if (ammo.item != null) {
-					b.append("[white]").append(ammo.item.emoji()).append(" [stat]")
-									   .append(ammo.item.localizedName);
+				if (ammo.key != null) {
+					b.append("[white]").append(ammo.key.emoji()).append(" [stat]")
+									   .append(ammo.key.localizedName);
 					indent(b, 3);
 				}
-				displayRecursive(b, ammo.bullet);
+				if (ammo.value != null) displayRecursive(b, ammo.value);
 			}
 			
 		}
@@ -55,7 +56,7 @@ public class StatUtils {
 	// Displays bullet and its frag bullets
 	private static void displayRecursive(StringBuilder b, BulletType bullet) {
 		//ifififififififiififiifififififififififififif
-		if (bullet.ammoMultiplier != 2)   stat(b, Core.bundle.format("bullet.multiplier", bullet.ammoMultiplier));
+		if (bullet.ammoMultiplier != 1)   stat(b, Core.bundle.format("bullet.multiplier", bullet.ammoMultiplier));
 		if (bullet.damage > 0)            stat(b, Core.bundle.format("bullet.damage", bullet.damage));
 		if (bullet.reloadMultiplier != 1) stat(b, Core.bundle.format("bullet.reload", bullet.reloadMultiplier));
 		if (bullet.splashDamage != 0)     stat(b, Core.bundle.format("bullet.splashdamage", bullet.splashDamage, bullet.splashDamageRadius / 8));

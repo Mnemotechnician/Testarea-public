@@ -14,6 +14,7 @@ import static mindustry.type.ItemStack.*;
 
 import testarea.content.*;
 import testarea.world.blocks.effect.*;
+import testarea.world.blocks.distribution.*;
 import testarea.world.blocks.experimental.*;
 import testarea.world.blocks.util.*;
 import testarea.world.blocks.storage.*;
@@ -26,18 +27,35 @@ public class TestareaBlocks implements ContentList {
 	
 	public static Block 
 	
+	duet,
+	
+	durouter,
+	
 	weaponizedCore,
 		
 	accelerator, overclocker,
 		
 	selfreplicator, deconstructor,
 	
-	duet,
-	
 	placeholder;
 	
 	@Override
 	public void load() {
+		duet = new Multiturret("duet") {{
+			size = 3;
+			
+			turretMounts = TurretModule.define(vortex, 1, maelstrom, 1);
+			turretOffset = 6;
+			
+			consumes.power(140f / 60f);
+			requirements(Category.turret, with(Items.copper, 300, Items.titanium, 150, Items.silicon, 250, Items.plastanium, 50));
+		}};
+		
+		durouter = new Durouter("durouter") {{
+			itemCapacity = 4;
+			requirements(Category.distribution, with(Items.copper, 50));
+		}};
+		
 		weaponizedCore = new WeaponizedCore("core-uranium") {{
 			size = 6;
 			
@@ -92,16 +110,6 @@ public class TestareaBlocks implements ContentList {
 			
 			consumes.power(1040f / 60f);
 			requirements(Category.effect, with(Items.titanium, 250, Items.silicon, 300, Items.surgeAlloy, 100));
-		}};
-		
-		duet = new Multiturret("duet") {{
-			size = 3;
-			
-			turretMounts = TurretModule.define(vortex, 1, maelstrom, 1);
-			turretOffset = 6;
-			
-			consumes.power(140f / 60f);
-			requirements(Category.turret, with(Items.copper, 300, Items.titanium, 150, Items.silicon, 250, Items.plastanium, 50));
 		}};
 		
 		placeholder = new Placeholder("placeholder") {{
