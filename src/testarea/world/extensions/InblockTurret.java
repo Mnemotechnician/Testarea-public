@@ -91,7 +91,7 @@ public class InblockTurret {
 		this.name = Vars.content.transformName(name);
 	}
 	
-	//Creates a new instance of the turret entity. Initializes the type if it isn't initialized yet.
+	/** Creates a new instance of the turret entity. Initializes the type if it isn't initialized yet. */
 	public TurretEntity create(Building parent) {
 		if (!initialized) init(); //h
 		TurretEntity turret = new TurretEntity(this, parent);
@@ -115,6 +115,20 @@ public class InblockTurret {
 	/** returns localized name of the turret defined in a bundle */
 	public String localized() {
 		return Core.bundle.get("extension." + name + ".name");
+	}
+	
+	/** returns the maximum range of the turret type */
+	public float maxRange() {
+		float maxRange = 0;
+		for (AmmoEntry a : ammoList) maxRange = Math.max(a.bullet.range(), maxRange); //can't use a lambda here
+		return maxRange;
+	}
+	
+	/** returns the minimum range of the turret type */
+	public float minRange() {
+		float minRange = 1000000;
+		for (AmmoEntry a : ammoList) minRange = Math.min(a.bullet.range(), minRange);
+		return minRange;
 	}
 	
 	/**
@@ -154,7 +168,7 @@ public class InblockTurret {
 			set(parent.x + offX, parent.y + offY);
 			
 			currentAmmo = possibleAmmo();
-			if (currentAmmo != null) range = (defaultRange > 0 ? defaultRange : currentAmmo.bullet.speed * currentAmmo.bullet.lifetime * 1.1f);
+			if (currentAmmo != null) range = (defaultRange > 0 ? defaultRange : currentAmmo.bullet.range());
 			
 			if(!validateTarget()) target = null;
 			wasShooting = false;
@@ -282,22 +296,21 @@ public class InblockTurret {
 		
 		protected void bullet(BulletType type, float angle){
 			float lifeScl = type.scaleVelocity ? Mathf.clamp(Mathf.dst(x + tr.x, y + tr.y, targetPos.x, targetPos.y) / type.range(), minRange / type.range(), range / type.range()) : 1f;
-
 			type.create(parent, parent.team, x + tr.x, y + tr.y, angle, 1f + Mathf.range(velocityInaccuracy), lifeScl);
 		}
 	
 		protected void effects(){
 			Effect fshootEffect = shootEffect == Fx.none ? peekAmmo().shootEffect : shootEffect;
 			Effect fsmokeEffect = smokeEffect == Fx.none ? peekAmmo().smokeEffect : smokeEffect;
-
+			
 			fshootEffect.at(x + tr.x, y + tr.y, rotation);
 			fsmokeEffect.at(x + tr.x, y + tr.y, rotation);
 			shootSound.at(x + tr.x, y + tr.y, Mathf.random(0.9f, 1.1f));
-
+			
 			if(shootShake > 0){
 				Effect.shake(shootShake, shootShake, this);
 			}
-
+			
 			recoil = recoilAmount;
 		}
 		

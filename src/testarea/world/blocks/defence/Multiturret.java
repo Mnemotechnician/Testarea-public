@@ -32,7 +32,6 @@ public class Multiturret extends Block {
 	
 	public Seq<InblockTurret> turretMounts;
 	public int turretOffset = 8;
-	public float maxRange = -1; //negative = auto
 	
 	public boolean heatSpin = true;
 	public float rotationSpeed = 1f;
@@ -53,16 +52,12 @@ public class Multiturret extends Block {
 	@Override
 	public void drawPlace(int x, int y, int rotation, boolean valid) {
 		super.drawPlace(x, y, rotation, valid);
-		Drawf.dashCircle(x * 8, y * 8, maxRange, Pal.accent);
+		turretMounts.each(t -> Drawf.dashCircle(x * 8, y * 8, t.maxRange(), Pal.accent));
 	}
 	
 	@Override
 	public void init() {
 		super.init();
-		//find max range, if not pre-set
-		if (maxRange < 0) turretMounts.each(t -> t.ammoList.each(a -> {
-			maxRange = Math.max(a.bullet.range() + turretOffset, maxRange);
-		}));
 	}
 	
 	public class MultiturretBuild extends Building implements ControlBlock {
@@ -166,7 +161,7 @@ public class Multiturret extends Block {
 		@Override
 		public void drawSelect() {
 			super.drawSelect();
-			Drawf.dashCircle(x, y, maxRange, Pal.accent);
+			turrets.each(t -> Drawf.dashCircle(t.x, t.y, t.range, Pal.accent));
 		}
 		
 	}

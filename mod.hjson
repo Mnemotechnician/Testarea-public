@@ -2,7 +2,7 @@ displayName: "Testareaa"
 name: "testarea"
 author: "Мнемотехник"
 description: "Some random java things, useful or not. Basically I'm implementing my random ideas here.\n\n[accent]May and will not be compatible with multiplayer.[]\n\nNow introducing: a core with 8 independent turrets!\nWarning: cursed sprites may hurt your eyes."
-version: 1.4
+version: 1.4.1
 minGameVersion: 131
 
 java: true
