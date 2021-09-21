@@ -109,22 +109,36 @@ public class ItemTurret extends InblockTurret {
 			}
 		}
 		
+		/** Finds the best available ammo by score */
 		public void findAmmo() {
-			//this is sick but it works
+			ObjectMap.Entry<Item, BulletType> bestEntry = null;
+			float bestScore = 0;
+			
 			if (interval.get(1, 15) || currentBullet == null) {
 				var iterator = ammoMap.entries();
+				
 				while (iterator.hasNext()) {
 					var entry = iterator.next();
-					if (parent.items.has(entry.key)) {
-						currentBullet = entry.value;
-						currentItem = entry.key;
-						return;
+					float score = bulletScore(entry.value);
+					
+					if (parent.items.has(entry.key) && score > bestScore) {
+						bestEntry = entry;
+						bestScore = score;
 					}
 				}
-				currentBullet = null;
-				currentItem = null; //no possible ammo
+				if (bestEntry != null) {
+					currentBullet = bestEntry.value;
+					currentItem = bestEntry.key;
+				} else {
+					currentBullet = null;
+					currentItem = null; 
+				}
 			}
-			//use the old ammo
+		}
+		
+		/** Very approximate score of a bullet */
+		public float bulletScore(BulletType b) {
+			 return (b.damage + b.splashDamage + (b.fragBullet != null ? b.fragBullets * b.fragBullet.damage : 0)) * b.reloadMultiplier;
 		}
 		
 		@Override
