@@ -26,9 +26,9 @@ import testarea.world.extensions.*;
 /** Inblock turret that consumes parent's items in order to shoot. */
 public class ItemTurret extends InblockTurret {
 	
-	public ObjectMap<Item, BulletType> ammoMap = new ObjectMap();
+	public ObjectMap<Item, BulletType> ammoMap = new ObjectMap(10);
 	
-	public ObjectMap<UnlockableContent, BulletType> tmp = new ObjectMap();
+	public ObjectMap<UnlockableContent, BulletType> tmp = new ObjectMap(10);
 	
 	public ItemTurret(String name) {
 		super(name);
@@ -70,11 +70,20 @@ public class ItemTurret extends InblockTurret {
 		return tmp;
 	}
 	
+	/** Very approximate score of a bullet */
+	public float bulletScore(BulletType b) {
+		 return (Math.max(b.damage, 0) 
+				 + Math.max(b.splashDamage, 0) * Math.max(b.splashDamageRadius / 12, 1)
+				 + (b.lightningDamage > 0 ? b.lightning * b.lightningDamage : 0) 
+				 + (b.fragBullet != null ? b.fragBullets * b.fragBullet.damage : 0)) 
+				* b.reloadMultiplier;
+	}
+	
 	//Big brain 100500 iq move
 	public class TurretEntity extends InblockTurret.TurretEntity {
 		
-		protected BulletType currentBullet = null;
-		protected Item currentItem = null; 
+		public BulletType currentBullet = null;
+		public Item currentItem = null; 
 		public int ammoLeft = 0;
 		
 		public TurretEntity(ItemTurret type, Building parent) {
@@ -109,36 +118,31 @@ public class ItemTurret extends InblockTurret {
 			}
 		}
 		
-		/** Finds the best available ammo by score */
+		/** Finds available ammo */
 		public void findAmmo() {
-			ObjectMap.Entry<Item, BulletType> bestEntry = null;
-			float bestScore = 0;
-			
 			if (interval.get(1, 15) || currentBullet == null) {
-				var iterator = ammoMap.entries();
+				/* Some may ask "why not just ObjectMap.Entry?". BECAUSE FUCKING OBJECT MAP REUSES THE
+				INSTANCE OF ENTRY AJSHXIDJWJSIXKDKDJ A A AAA A A A A A A A A  A A A A TEN FUCKING HOURS WASTED FUCK YOU OBJECT MAP! */
+				BulletType bestBullet = null;
+				Item respectiveItem = null;
+				float bestScore = 0;
 				
-				while (iterator.hasNext()) {
-					var entry = iterator.next();
-					float score = bulletScore(entry.value);
-					
-					if (parent.items.has(entry.key) && score > bestScore) {
-						bestEntry = entry;
-						bestScore = score;
+				for (var entry : ammoMap.entries()) {
+					float bscore = bulletScore(entry.value);
+					if (parent.items.get(entry.key) > (ammoPerShot / entry.value.ammoMultiplier) && bscore > bestScore) {
+						bestBullet = entry.value;
+						respectiveItem = entry.key;
+						bestScore = bscore;
 					}
 				}
-				if (bestEntry != null) {
-					currentBullet = bestEntry.value;
-					currentItem = bestEntry.key;
+				if (bestBullet != null) {
+					currentBullet = bestBullet;
+					currentItem = respectiveItem; 
 				} else {
 					currentBullet = null;
 					currentItem = null; 
 				}
 			}
-		}
-		
-		/** Very approximate score of a bullet */
-		public float bulletScore(BulletType b) {
-			 return (b.damage + b.splashDamage + (b.fragBullet != null ? b.fragBullets * b.fragBullet.damage : 0)) * b.reloadMultiplier;
 		}
 		
 		@Override

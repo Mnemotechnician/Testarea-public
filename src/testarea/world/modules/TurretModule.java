@@ -19,7 +19,7 @@ import testarea.world.extensions.*;
  */
 public class TurretModule {
 	
-	protected Seq<InblockTurret.TurretEntity> turrets;
+	public Seq<InblockTurret.TurretEntity> turrets;
 	public Building parent;
 	
 	/** Creates a turret module from an existing turret entity sequence */

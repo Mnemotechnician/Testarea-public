@@ -41,6 +41,7 @@ public class Multiturret extends Block {
 		hasItems = true;
 		solid = true;
 		update = true;
+		unloadable = false;
 	}
 	
 	@Override
