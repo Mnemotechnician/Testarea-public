@@ -26,12 +26,13 @@ public class Provider extends Block {
 		update = true;
 		hasItems = true;
 		itemCapacity = 10;
+		instantTransfer = true; //this prevents endless recursion when combined with overflow gate or smth similar
 	}
 	
 	@Override
 	public void drawPlace(int x, int y, int rotation, boolean valid) {
 		super.drawPlace(x, y, rotation, valid);
-		Drawf.dashCircle(x, y, range, Pal.accent);
+		Drawf.dashCircle(x * 8, y * 8, range, Pal.accent);
 	}
 	
 	public class ProviderBuild extends Building {
