@@ -107,7 +107,7 @@ public class Provider extends Block {
 		public Building findClient(Item provision) {
 			tmpClients.clear();
 			Units.nearbyBuildings(x, y, range, b -> {
-				if (b.team == team && b.acceptItem(this, provision) && !b.instantTransfer
+				if (b.team == team && b.acceptItem(this, provision) && !b.block.instantTransfer
 					&& !(b.block instanceof CoreBlock || b.block.category == Category.distribution))
 				{
 					tmpClients.add(b);
