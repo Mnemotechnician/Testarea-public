@@ -29,7 +29,7 @@ public class TestareaBlocks implements ContentList {
 	
 	duet,
 	
-	durouter,
+	durouter, provider,
 	
 	weaponizedCore,
 		
@@ -54,6 +54,15 @@ public class TestareaBlocks implements ContentList {
 		durouter = new Durouter("durouter") {{
 			itemCapacity = 4;
 			requirements(Category.distribution, with(Items.copper, 50));
+		}};
+		
+		provider = new Provider("provider") {{
+			size = 3;
+			range = 8 * 8;
+			speed = 0.4f;
+			
+			consumes.power(230 / 60f);
+			requirements(Category.distribution, with(Items.silicon, 120, Items.phaseFabric, 70));
 		}};
 		
 		weaponizedCore = new WeaponizedCore("core-uranium") {{
@@ -91,9 +100,9 @@ public class TestareaBlocks implements ContentList {
 		accelerator = new Overclocker("accelerator") {{
 			size = 2;
 			fillsTile = false;
-			multiplier = 1.8f;
+			multiplier = 1.4f;
 			baseDamage = 60f / 60f;
-			relativeDamage = 0.03f / 60f;
+			relativeDamage = 0.08f / 60f;
 			blobSpeed = 1f / 190f;
 			
 			consumes.power(420f / 60f);
@@ -103,9 +112,9 @@ public class TestareaBlocks implements ContentList {
 		overclocker = new Overclocker("overclocker") {{
 			size = 3;
 			fillsTile = false;
-			multiplier = 2.6f;
+			multiplier = 1.95f;
 			baseDamage = 150f / 60f;
-			relativeDamage = 0.1f / 60f;
+			relativeDamage = 0.15f / 60f;
 			blobSpeed = 1f / 120f;
 			
 			consumes.power(1040f / 60f);

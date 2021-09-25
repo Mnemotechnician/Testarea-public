@@ -42,6 +42,12 @@ public class Durouter extends Router {
 		return new TextureRegion[] {region/*, Blocks.duo.region*/};
 	}
 	
+	@Override
+	public void drawPlace(int x, int y, int rotation, boolean valid) {
+		super.drawPlace(x, y, rotation, valid);
+		turretMounts.each(t -> Drawf.dashCircle(x * 8, y * 8, t.maxRange(), Pal.accent));
+	}
+	
 	public class DurouterBuild extends Router.RouterBuild {
 		
 		public TurretModule turrets = new TurretModule(this, turretMounts, turretOffset, 0);

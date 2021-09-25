@@ -142,7 +142,7 @@ public class Deconstructor extends Block {
 			return (Unit) unit;
 		};
 		
-		//Returns whether the block's inventory can accept refund of deconstructing the current target
+		/** Returns whether the block's inventory can accept refund of deconstruction */
 		public boolean canContinue() {
 			if (targetBlock == null) return true;
 			for (int i = 0; i < targetBlock.requirements.length; i++) {
@@ -156,15 +156,14 @@ public class Deconstructor extends Block {
 		public void draw() {
 			super.draw();
 			
-			if (!(isDeconstructing && enabled)) return;
-			if (!(targetTile.build instanceof ConstructBlock.ConstructBuild cb)) return;
+			if (!(isDeconstructing && targetTile.build instanceof ConstructBlock.ConstructBuild cb)) return;
 			
 			Draw.z(Layer.power);
 			Draw.color(Pal.remove);
 			Lines.stroke(1f);
 			
-			for (int i = 0; i < 4; i++) {
-				float fin = Mathf.mod((cb.progress * 4) - i / 4f, 1);
+			for (int i = 0; i < 5; i++) {
+				float fin = Mathf.mod((cb.progress * 5) - i / 5f, 1);
 				
 				arcInterp(Tmp.v1.set(x, y), Tmp.v2.set(targetTile.x * 8, targetTile.y * 8), fin, i % 2 == 0 ? 50 : -50);
 				float x = Tmp.v1.x, y = Tmp.v1.y;
@@ -173,13 +172,14 @@ public class Deconstructor extends Block {
 			};
 		};
 		
-		//Arc vec2 interpolation. Offset is the difference between start and end angles (in degrees)
-		private void arcInterp(Vec2 origin, Vec2 end, float distance, float offset) {
+		/** Arc vec2 interpolation. Offset is the difference between start and end angles (in degrees) */
+		public void arcInterp(Vec2 origin, Vec2 end, float distance, float offset) {
 			float dst = origin.dst(end), slope = 1 - Math.abs((distance - 0.5f) * 2);
-			float angle = origin.angleTo(end) + offset * slope; 
+			float angle = origin.angleTo(end) + offset * Mathf.sin(slope * Mathf.PI / 2);
 			origin.x += Angles.trnsx(angle, dst * distance);
 			origin.y += Angles.trnsy(angle, dst * distance);
 		}
 		
 	}
+	
 }

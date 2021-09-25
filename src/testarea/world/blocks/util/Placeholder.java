@@ -10,11 +10,11 @@ import mindustry.world.*;
 
 /**
  * This block is exactly what it's name says
- * does absolutely nothing, disappears after 8 seconds
+ * does absolutely nothing, disappears after 5 seconds
  */
 public class Placeholder extends Block {
 	
-	float maxLife = 8 * 60f;
+	float maxLife = 5 * 60f;
 	
 	public Placeholder(String name) {
 		super(name);
